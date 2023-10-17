@@ -34,18 +34,19 @@ async function scrapeProduct(url) {
         console.log("Scraping function called2");
         let title = document.getElementById('productTitle')?.textContent?.trim();
 
-        
+        let price;
 
-        let priceWholeElement = document.getElementsByClassName('a-price-whole');
-        let priceFractionElement = document.getElementsByClassName('a-price-fraction');
-        
-        
-        let priceWhole = priceWholeElement.length > 0 ? priceWholeElement[0].textContent.trim() : null;
-        let priceFraction = priceFractionElement.length > 0 ? priceFractionElement[0].textContent.trim() : null;
-        let priceOneTime = priceOneTimeElement.length > 0 ? priceOneTimeElement[0].textContent.trim() : null;
-        
-        // Combine the whole and fraction parts of the price
-        let price = priceWhole && priceFraction ? `${priceWhole}${priceFraction}` : priceWhole;
+        if (founSelector === '.a-price-whole'){
+            let priceWholeElement = document.getElementsByClassName('a-price-whole');
+            let priceFractionElement = document.getElementsByClassName('a-price-fraction');
+            let priceWhole = priceWholeElement.length > 0 ? priceWholeElement[0].textContent.trim() : null;
+            let priceFraction = priceFractionElement.length > 0 ? priceFractionElement[0].textContent.trim() : null;
+            // Combine the whole and fraction parts of the price
+            price = priceWhole && priceFraction ? `${priceWhole}${priceFraction}` : priceWhole;
+        } else if (founSelector === 'a-price a-text-price header-price a-size-base a-text-normal') {
+            let priceOneTime = priceOneTimeElement.length > 0 ? priceOneTimeElement[0].textContent.trim() : null;
+
+        }
     
         let rating = document.querySelector('.a-icon-alt')?.textContent?.trim();
         let numberOfReviews = document.getElementById('acrCustomerReviewText')?.textContent?.trim();
@@ -57,7 +58,7 @@ async function scrapeProduct(url) {
             rating,
             numberOfReviews
         };
-    });
+    }, founSelector);
 
     await browser.close();
     return productDetails;
